@@ -10,7 +10,22 @@
     tools:context="com.puskin.frankenstein.Home">
 
     <TextView
+        android:id="@+id/textView_label_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp"
+        android:text="Ce vine de la service:"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textView_webservice_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_label_description"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
 </RelativeLayout>
