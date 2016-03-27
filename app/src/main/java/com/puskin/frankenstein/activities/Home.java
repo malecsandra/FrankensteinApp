@@ -1,4 +1,4 @@
-package com.puskin.frankenstein;
+package com.puskin.frankenstein.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.puskin.frankenstein.R;
 import com.puskin.frankenstein.network.FrankensteinEndpointInterface;
 import com.puskin.frankenstein.network.ToStringConverterFactory;
 
