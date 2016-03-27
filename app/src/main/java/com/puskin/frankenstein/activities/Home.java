@@ -13,6 +13,7 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.puskin.frankenstein.R;
+import com.puskin.frankenstein.examples.ExampleHub;
 import com.puskin.frankenstein.network.FrankensteinEndpointInterface;
 import com.puskin.frankenstein.network.ToStringConverterFactory;
 
