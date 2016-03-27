@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/analize"
+            android:checked="false"
+            android:title="Analize" />
+
+        <item
+            android:id="@+id/istoric"
+            android:checked="true"
+            android:title="Istoric"/>
+
+        <item
+            android:id="@+id/programari"
+            android:checked="false"
+            android:title="Programari"/>
+
+        <item
+            android:id="@+id/itemX"
+            android:checked="false"
+            android:title="Item X"/>
+
+        <item
+            android:id="@+id/itemY"
+            android:checked="false"
+            android:title="Item Y"/>
+
+        <item
+            android:id="@+id/itemZ"
+            android:checked="false"
+            android:title="Item Z"/>
+
+        <item
+            android:id="@+id/itemT"
+            android:checked="false"
+            android:title="Item T" />
+
+    </group>
+</menu>

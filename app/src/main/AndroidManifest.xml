@@ -17,6 +17,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".examples.ExampleHub"
+            android:label="@string/examples_hub" />
+        <activity android:name=".examples.DrawerActivity"></activity>
     </application>
 
 </manifest>

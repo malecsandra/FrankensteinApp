@@ -1,14 +1,14 @@
 package com.puskin.frankenstein;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.puskin.frankenstein.examples.ExampleHub;
 import com.puskin.frankenstein.network.FrankensteinEndpointInterface;
 import com.puskin.frankenstein.network.ToStringConverterFactory;
 
@@ -16,9 +16,9 @@ import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Home extends AppCompatActivity {
 
@@ -28,6 +28,8 @@ public class Home extends AppCompatActivity {
     TextView labelDescription;
     @Bind(R.id.textView_webservice_result)
     TextView webserviceResult;
+    @Bind(R.id.button_launchExperiments)
+    Button buttonLaunchExperiments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,24 +41,10 @@ public class Home extends AppCompatActivity {
             @Override
             protected String doInBackground(Void... params) {
                 String result;
-                Gson gson = new GsonBuilder()
-                        .setExclusionStrategies(new ExclusionStrategy() {
-
-                            @Override
-                            public boolean shouldSkipField(FieldAttributes f) {
-                                return f.getDeclaredClass().equals(String.class);
-                            }
-
-                            @Override
-                            public boolean shouldSkipClass(Class<?> clazz) {
-                                return false;
-                            }
-                        })
-                        .create();
 
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(BASE_URL)
-                        .addConverterFactory(new ToStringConverterFactory() )
+                        .addConverterFactory(new ToStringConverterFactory())
                         .build();
 
                 FrankensteinEndpointInterface feInterface = retrofit.create(FrankensteinEndpointInterface.class);
@@ -78,8 +66,14 @@ public class Home extends AppCompatActivity {
 
                 labelDescription.setText("Potato");
             }
-        }.execute();
+        };
 
-
+        buttonLaunchExperiments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Home.this, ExampleHub.class);
+                startActivity(i);
+            }
+        });
     }
 }
