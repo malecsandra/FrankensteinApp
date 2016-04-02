@@ -2,10 +2,14 @@ package com.puskin.frankenstein.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by Alexandra on 02-Apr-16.
  */
-public class User {
+public class User extends RealmObject {
+    @PrimaryKey
     @SerializedName("UserId")
     private int userId;
 

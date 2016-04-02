@@ -4,10 +4,14 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Calendar;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by Alexandra on 02-Apr-16.
  */
-public class Person {
+public class Person extends RealmObject {
+    @PrimaryKey
     @SerializedName("PersonId")
     private int personId;
 

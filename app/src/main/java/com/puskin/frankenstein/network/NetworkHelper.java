@@ -1,5 +1,6 @@
 package com.puskin.frankenstein.network;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.ExclusionStrategy;
@@ -12,6 +13,9 @@ import com.puskin.frankenstein.models.User;
 
 import org.greenrobot.eventbus.EventBus;
 
+import io.realm.Realm;
+import io.realm.RealmObject;
+import io.realm.UserRealmProxy;
 import okhttp3.internal.http.RetryableSink;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,7 +36,7 @@ public class NetworkHelper {
 
                     @Override
                     public boolean shouldSkipField(FieldAttributes f) {
-                        return false;
+                        return f.getDeclaringClass().equals(RealmObject.class);
                     }
 
                     @Override
@@ -54,6 +58,17 @@ public class NetworkHelper {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 Log.d("dbg", "onResponse: response was successful");
+
+                if(response.code()==200){
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.clear(User.class);
+
+                    realm.copyToRealmOrUpdate(response.body());
+
+                    realm.commitTransaction();
+                }
+
                 EventBus.getDefault().post(new LoginEvent(response.code(),response.message()));
             }
 
