@@ -11,16 +11,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.Home">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".examples.ExampleHub"
             android:label="@string/examples_hub" />
-        <activity android:name=".examples.DrawerActivity"></activity>
+        <activity android:name=".examples.DrawerActivity" />
+        <activity android:name=".activities.LogIn">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
