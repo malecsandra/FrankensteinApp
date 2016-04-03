@@ -3,6 +3,7 @@ package com.puskin.frankenstein.models;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -24,8 +25,8 @@ public class Person extends RealmObject {
     @SerializedName("DigitCode")
     private String digitCode;
 
-//    @SerializedName("BirthDate")
-//    private Calendar birthDate;
+    @SerializedName("BirthDate")
+    private Date birthDate;
 
     @SerializedName("Sex")
     private String sex;
@@ -41,12 +42,12 @@ public class Person extends RealmObject {
     public Person() {
     }
 
-    public Person(int personId, String name, String surname, String digitCode, Calendar birthDate, String sex, String email, String phoneNo) {
+    public Person(int personId, String name, String surname, String digitCode, Date birthDate, String sex, String email, String phoneNo) {
         this.personId = personId;
         this.name = name;
         this.surname = surname;
         this.digitCode = digitCode;
-        //this.birthDate = birthDate;
+        this.birthDate = birthDate;
         this.sex = sex;
         this.email = email;
         this.phoneNo = phoneNo;
@@ -84,14 +85,6 @@ public class Person extends RealmObject {
         this.digitCode = digitCode;
     }
 
-//    public Calendar getBirthDate() {
-//        return birthDate;
-//    }
-//
-//    public void setBirthDate(Calendar birthDate) {
-//        this.birthDate = birthDate;
-//    }
-
     public String getSex() {
         return sex;
     }
@@ -114,5 +107,13 @@ public class Person extends RealmObject {
 
     public void setPhoneNo(String phoneNo) {
         this.phoneNo = phoneNo;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 }

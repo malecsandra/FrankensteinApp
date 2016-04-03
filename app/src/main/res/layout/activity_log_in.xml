@@ -13,8 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/etUserName"
@@ -25,34 +25,41 @@
             android:ems="10"
             android:gravity="center"
             android:hint="username"
-            android:text="amindrean"/>
+            android:text="amindrean" />
 
         <EditText
             android:id="@+id/etPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/etUserName"
             android:layout_centerHorizontal="true"
             android:ems="10"
             android:gravity="center"
             android:hint="password"
             android:inputType="textPassword"
-            android:text="123"/>
+            android:text="123" />
 
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/etPassword"
             android:layout_centerHorizontal="true"
-            android:text="Log in"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            android:text="Log in" />
 
         <ProgressBar
             android:id="@+id/pbLogin"
+            style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            style="@style/Widget.AppCompat.ProgressBar"/>
+            android:visibility="gone" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:text="Register" />
 </RelativeLayout>

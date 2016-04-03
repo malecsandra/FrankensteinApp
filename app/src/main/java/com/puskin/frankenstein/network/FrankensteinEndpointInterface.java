@@ -20,4 +20,8 @@ public interface FrankensteinEndpointInterface {
     @Headers("Content-Type: application/json")
     @POST("login")
     Call<User> logIn(@Body LoginObject loginObject);
+
+    @Headers("Content-Type: application/json")
+    @POST("register")
+    Call<Void> register(@Body User user);
 }

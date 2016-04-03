@@ -1,6 +1,7 @@
 package com.puskin.frankenstein.activities;
 
 import android.content.Intent;
+import android.net.nsd.NsdManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -22,6 +23,9 @@ import butterknife.ButterKnife;
 
 public class LogIn extends AppCompatActivity {
 
+    public static final int RESULT_OK = 200;
+    private static final int REQUEST_CODE = 1;
+
     @Bind(R.id.btnLogin)
     Button buttonLogIn;
     @Bind(R.id.etUserName)
@@ -30,6 +34,9 @@ public class LogIn extends AppCompatActivity {
     TextView etPassword;
     @Bind(R.id.pbLogin)
     ProgressBar pbLogin;
+    @Bind(R.id.tvSignUp)
+    TextView tvSignUp;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +52,14 @@ public class LogIn extends AppCompatActivity {
                 LoginObject loginObject = new LoginObject(etUserName.getText().toString(),
                         etPassword.getText().toString());
                 NetworkHelper.doLogin(loginObject);
+            }
+        });
+
+        tvSignUp.setOnClickListener(new View.OnClickListener(){
+            @Override
+        public void onClick(View v){
+                Intent i = new Intent(LogIn.this, Register.class);
+                startActivityForResult(i, REQUEST_CODE);
             }
         });
     }
@@ -63,15 +78,21 @@ public class LogIn extends AppCompatActivity {
 
     @Subscribe
     public void onLoginEvent(LoginEvent loginEvent) {
-        if(loginEvent.getResponseCode()==200){
+        if (loginEvent.getResponseCode() == 200) {
             Intent i = new Intent(this, Home.class);
             startActivity(i);
             finish();
-        }
-        else{
+        } else {
             pbLogin.setVisibility(View.GONE);
             buttonLogIn.setVisibility(View.VISIBLE);
             Toast.makeText(this, loginEvent.getRespondeMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
+            etUserName.setText(data.getStringExtra("username"));
         }
     }
 }
