@@ -38,6 +38,8 @@ public class Home extends AppCompatActivity {
     TextView webserviceResult;
     @Bind(R.id.button_launchExperiments)
     Button buttonLaunchExperiments;
+    @Bind(R.id.button_Doctors)
+    Button buttonDoctors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,5 +60,14 @@ public class Home extends AppCompatActivity {
         User user = realm.where(User.class).findFirst();
 
         labelDescription.setText(user.getFullName() + " " + user.getPerson().getName());
+
+
+        buttonDoctors.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Home.this, DoctorList.class);
+                startActivity(i);
+            }
+        });
     }
 }

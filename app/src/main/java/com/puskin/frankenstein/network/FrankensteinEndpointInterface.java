@@ -1,8 +1,12 @@
 package com.puskin.frankenstein.network;
 
+import com.puskin.frankenstein.models.Doctor;
 import com.puskin.frankenstein.models.LoginObject;
 import com.puskin.frankenstein.models.User;
 
+import java.util.ArrayList;
+
+import io.realm.RealmList;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -24,4 +28,7 @@ public interface FrankensteinEndpointInterface {
     @Headers("Content-Type: application/json")
     @POST("register")
     Call<Void> register(@Body User user);
+
+    @GET("doctors")
+    Call<RealmList<Doctor>> getDoctors();
 }

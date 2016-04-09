@@ -36,4 +36,13 @@
         android:layout_alignParentStart="true"
         android:text="Go to Experiments!" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Doctors"
+        android:id="@+id/button_Doctors"
+        android:layout_above="@+id/button_launchExperiments"
+        android:layout_alignEnd="@+id/button_launchExperiments"
+        android:layout_marginBottom="177dp" />
+
 </RelativeLayout>

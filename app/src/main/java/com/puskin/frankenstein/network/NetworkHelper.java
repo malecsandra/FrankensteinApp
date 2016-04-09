@@ -1,20 +1,24 @@
 package com.puskin.frankenstein.network;
 
 import android.content.Context;
+import android.util.EventLogTags;
 import android.util.Log;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.puskin.frankenstein.events.DoctorEvent;
 import com.puskin.frankenstein.events.LoginEvent;
 import com.puskin.frankenstein.events.RegisterEvent;
+import com.puskin.frankenstein.models.Doctor;
 import com.puskin.frankenstein.models.LoginObject;
 import com.puskin.frankenstein.models.User;
 
 import org.greenrobot.eventbus.EventBus;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.UserRealmProxy;
 import okhttp3.internal.http.RetryableSink;
@@ -125,6 +129,48 @@ public class NetworkHelper {
             public void onFailure(Call<Void> call, Throwable t) {
                 EventBus.getDefault().post(new RegisterEvent(-1, "Request failed"));
 
+            }
+        });
+    }
+
+    public static void getDoctors()
+    {
+        Gson gson = new GsonBuilder()
+                .setExclusionStrategies(new ExclusionStrategy() {
+
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getDeclaringClass().equals(RealmObject.class);
+                    }
+
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
+                .create();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        FrankensteinEndpointInterface feInterface = retrofit.create(FrankensteinEndpointInterface.class);
+
+        Call<RealmList<Doctor>> call = feInterface.getDoctors();
+        call.enqueue(new Callback<RealmList<Doctor>>() {
+
+
+            @Override
+            public void onResponse(Call<RealmList<Doctor>> call, Response<RealmList<Doctor>> response) {
+                Log.d("DBG", "onResponse: " + response.code() + ' ' + response.message());
+                DoctorEvent doctorEvent = new DoctorEvent(response.code(), response.message(),response.body());
+                EventBus.getDefault().post(doctorEvent);
+            }
+
+            @Override
+            public void onFailure(Call<RealmList<Doctor>> call, Throwable t) {
+                Log.d("DBG", "Fail: getDoctors");
             }
         });
     }
