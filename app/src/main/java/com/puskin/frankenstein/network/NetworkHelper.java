@@ -32,7 +32,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Alexandra on 02-Apr-16.
  */
 public class NetworkHelper {
-    public static final String BASE_URL = "http://192.168.100.13/FrankensteinWS/api/";
+    public static final String BASE_URL = "http://192.168.100.7/FrankensteinWS/api/";
 
     public static boolean doLogin(LoginObject loginObject) {
         Log.d("DBG", "Login with user: " + loginObject.getUsername() + " and password: " + loginObject.getPassword());

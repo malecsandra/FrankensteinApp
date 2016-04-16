@@ -12,4 +12,7 @@
 
     </style>
 
+    <style name="TransparentToolbar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:background">@color/medium_transparent</item>
+    </style>
 </resources>

@@ -4,39 +4,25 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/analize"
-            android:checked="false"
-            android:title="Analize" />
-
-        <item
-            android:id="@+id/istoric"
-            android:checked="true"
-            android:title="Istoric"/>
-
-        <item
             android:id="@+id/programari"
             android:checked="false"
-            android:title="Programari"/>
+            android:title="Appointments"
+            android:icon="@drawable/appointments1"/>
 
         <item
-            android:id="@+id/itemX"
+            android:id="@+id/analize"
             android:checked="false"
-            android:title="Item X"/>
+            android:title="Laboratory Tests"
+            android:icon="@drawable/test_tube"/>
 
         <item
-            android:id="@+id/itemY"
-            android:checked="false"
-            android:title="Item Y"/>
+            android:id="@+id/tratament"
+            android:checked="true"
+            android:title="Medical Treatment"
+            android:icon="@drawable/prescription"/>
 
-        <item
-            android:id="@+id/itemZ"
-            android:checked="false"
-            android:title="Item Z"/>
 
-        <item
-            android:id="@+id/itemT"
-            android:checked="false"
-            android:title="Item T" />
+
 
     </group>
 </menu>

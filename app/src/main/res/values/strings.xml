@@ -3,4 +3,6 @@
     <string name="examples_hub">Experiment Hub</string>
     <string name="openDrawer">Drawer is Open</string>
     <string name="closeDrawer">Drawer is Closed</string>
+    <string name="drawer_open">Drawer is open</string>
+    <string name="drawer_close">Drawer is closed</string>
 </resources>

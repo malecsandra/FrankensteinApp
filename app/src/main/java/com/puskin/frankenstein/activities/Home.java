@@ -1,45 +1,54 @@
 package com.puskin.frankenstein.activities;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.puskin.frankenstein.R;
-import com.puskin.frankenstein.examples.ExampleHub;
 import com.puskin.frankenstein.models.User;
-import com.puskin.frankenstein.network.FrankensteinEndpointInterface;
-import com.puskin.frankenstein.network.ToStringConverterFactory;
 
-import java.io.IOException;
+import org.w3c.dom.Text;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.Realm;
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Home extends AppCompatActivity {
 
-    public static final String BASE_URL = "http://192.168.0.106/FrankensteinWS/api/";
+    public static final String BASE_URL = "http://192.168.100.7/FrankensteinWS/api/";
 
-    @Bind(R.id.textView_label_description)
-    TextView labelDescription;
-    @Bind(R.id.textView_webservice_result)
-    TextView webserviceResult;
-    @Bind(R.id.button_launchExperiments)
-    Button buttonLaunchExperiments;
-    @Bind(R.id.button_Doctors)
-    Button buttonDoctors;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.drawerLayout)
+    DrawerLayout drawerLayout;
+    @Bind(R.id.navView_drawer)
+    NavigationView navViewDrawer;
+    @Bind(R.id.linearLayout_doctors)
+    LinearLayout linearLayoutDoctors;
+    @Bind(R.id.linearLayout_reminder)
+    LinearLayout linearLayoutReminder;
+    @Bind(R.id.linearLayout_locations)
+    LinearLayout linearLayoutLocations;
+    @Bind(R.id.linearLayout_contact)
+    LinearLayout linearLayoutContact;
+    View headerView;
+    private ActionBarDrawerToggle drawerToggle;
+    CircleImageView profileImage;
+    TextView userNameText;
+    TextView userEmailText;
+
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,27 +56,108 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
+        realm = Realm.getDefaultInstance();
 
-        buttonLaunchExperiments.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Home.this, ExampleHub.class);
-                startActivity(i);
-            }
-        });
-
-        Realm realm = Realm.getDefaultInstance();
-        User user = realm.where(User.class).findFirst();
-
-        labelDescription.setText(user.getFullName() + " " + user.getPerson().getName());
+        headerView = navViewDrawer.getHeaderView(0);
+        profileImage = (CircleImageView) headerView.findViewById(R.id.profile_image);
+        userNameText = (TextView) headerView.findViewById(R.id.textView_userName);
+        userEmailText = (TextView) headerView.findViewById(R.id.textView_userEmail);
 
 
-        buttonDoctors.setOnClickListener(new View.OnClickListener() {
+        setupUI();
+
+        setupButtons();
+    }
+
+    void setupUI() {
+        setSupportActionBar(toolbar);
+
+        setupDrawer();
+        populateDrawer();
+    }
+
+    void setupButtons() {
+        linearLayoutDoctors.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Home.this, DoctorList.class);
                 startActivity(i);
             }
         });
+
+        linearLayoutReminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Home.this, PillReminder.class);
+                startActivity(i);
+            }
+        });
+
+        linearLayoutLocations.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Home.this, Locations.class);
+                startActivity(i);
+            }
+        });
+    }
+
+    void setupDrawer() {
+        // Initializing Drawer Layout and ActionBarToggle
+        android.support.v7.app.ActionBarDrawerToggle actionBarDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
+
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        //Setting the actionbarToggle to drawer layout
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+
+        //calling sync state is necessay or else your hamburger icon wont show up
+        actionBarDrawerToggle.syncState();
+
+
+        navViewDrawer.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
+            // This method will trigger on item Click of navigation menu
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+
+                //Checking if the item is in checked state or not, if not make it in checked state
+                if (menuItem.isChecked()) menuItem.setChecked(false);
+                else menuItem.setChecked(true);
+
+                //Closing drawer on item click
+                drawerLayout.closeDrawers();
+
+                //Check to see which item was being clicked and perform appropriate action
+                switch (menuItem.getItemId()) {
+
+                    case R.id.analize:
+                        Toast.makeText(getApplicationContext(), "Analize Selected", Toast.LENGTH_SHORT).show();
+                        return true;
+
+                    default:
+                        Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
+                        return true;
+                }
+            }
+        });
+    }
+
+    private void populateDrawer() {
+        User loggedInUser = realm.where(User.class).findFirst();
+        userNameText.setText(loggedInUser.getFullName());
+        userEmailText.setText(loggedInUser.getPerson().getEmail());
     }
 }

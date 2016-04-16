@@ -34,7 +34,6 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.DoctorHold
             super(v);
             doctorName = (TextView) v.findViewById(R.id.tv_doctorname);
             doctorSpeciality = (TextView) v.findViewById(R.id.tv_speciality);
-            doctorPhoneno = (TextView) v.findViewById(R.id.tv_phoneno);
             doctorEmail = (TextView) v.findViewById(R.id.tv_email);
             doctorClinic = (TextView) v.findViewById(R.id.tv_clinic);
         }
@@ -65,7 +64,6 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.DoctorHold
         Doctor doctor = doctorList.get(position);
         holder.doctorName.setText(doctor.getName() + ' ' + doctor.getSurname());
         holder.doctorSpeciality.setText(doctor.getSpeciality().getSpecialityName());
-        holder.doctorPhoneno.setText(doctor.getPhoneNumber());
         holder.doctorEmail.setText(doctor.getEmail());
         holder.doctorClinic.setText(doctor.getClinic().getClinicName());
 

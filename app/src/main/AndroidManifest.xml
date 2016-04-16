@@ -28,7 +28,9 @@
         <activity
             android:name=".activities.Register"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name=".activities.DoctorList"></activity>
+        <activity android:name=".activities.DoctorList" />
+        <activity android:name=".activities.PillReminder" />
+        <activity android:name=".activities.Locations" />
     </application>
 
 </manifest>

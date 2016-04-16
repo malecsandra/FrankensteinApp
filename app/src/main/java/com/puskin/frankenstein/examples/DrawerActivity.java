@@ -40,7 +40,6 @@ public class DrawerActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
 
-
                 //Checking if the item is in checked state or not, if not make it in checked state
                 if(menuItem.isChecked()) menuItem.setChecked(false);
                 else menuItem.setChecked(true);
@@ -54,24 +53,7 @@ public class DrawerActivity extends AppCompatActivity {
                     case R.id.analize:
                         Toast.makeText(getApplicationContext(), "Analize Selected", Toast.LENGTH_SHORT).show();
                         return true;
-                    case R.id.istoric:
-                        Toast.makeText(getApplicationContext(),"Istoric Selected",Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.programari:
-                        Toast.makeText(getApplicationContext(),"Programari Selected",Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.itemX:
-                        Toast.makeText(getApplicationContext(),"Item X Selected",Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.itemY:
-                        Toast.makeText(getApplicationContext(),"Item Y Selected",Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.itemZ:
-                        Toast.makeText(getApplicationContext(),"Item Z Selected",Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.itemT:
-                        Toast.makeText(getApplicationContext(),"Item T Selected",Toast.LENGTH_SHORT).show();
-                        return true;
+
                     default:
                         Toast.makeText(getApplicationContext(),"Somethings Wrong",Toast.LENGTH_SHORT).show();
                         return true;
