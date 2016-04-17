@@ -8,9 +8,11 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.puskin.frankenstein.events.ClinicEvent;
 import com.puskin.frankenstein.events.DoctorEvent;
 import com.puskin.frankenstein.events.LoginEvent;
 import com.puskin.frankenstein.events.RegisterEvent;
+import com.puskin.frankenstein.models.Clinic;
 import com.puskin.frankenstein.models.Doctor;
 import com.puskin.frankenstein.models.LoginObject;
 import com.puskin.frankenstein.models.User;
@@ -170,6 +172,47 @@ public class NetworkHelper {
 
             @Override
             public void onFailure(Call<RealmList<Doctor>> call, Throwable t) {
+                Log.d("DBG", "Fail: getDoctors");
+            }
+        });
+    }
+
+    public static void getClinics(){
+        Gson gson = new GsonBuilder()
+                .setExclusionStrategies(new ExclusionStrategy() {
+
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getDeclaringClass().equals(RealmObject.class);
+                    }
+
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
+                .create();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        FrankensteinEndpointInterface feInterface = retrofit.create(FrankensteinEndpointInterface.class);
+
+        Call<RealmList<Clinic>> call = feInterface.getClinics();
+        call.enqueue(new Callback<RealmList<Clinic>>() {
+
+
+            @Override
+            public void onResponse(Call<RealmList<Clinic>> call, Response<RealmList<Clinic>> response) {
+                Log.d("DBG", "onResponse: " + response.code() + ' ' + response.message());
+                ClinicEvent clinicEvent = new ClinicEvent(response.code(), response.message(),response.body());
+                EventBus.getDefault().post(clinicEvent);
+            }
+
+            @Override
+            public void onFailure(Call<RealmList<Clinic>> call, Throwable t) {
                 Log.d("DBG", "Fail: getDoctors");
             }
         });

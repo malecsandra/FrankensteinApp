@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.puskin.frankenstein.OutRequests;
 import com.puskin.frankenstein.R;
 import com.puskin.frankenstein.models.User;
 
@@ -103,7 +104,7 @@ public class Home extends AppCompatActivity {
         linearLayoutLocations.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Home.this, Locations.class);
+                Intent i = new Intent(Home.this, ClinicActivity.class);
                 startActivity(i);
             }
         });
@@ -111,10 +112,7 @@ public class Home extends AppCompatActivity {
         linearLayoutContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent i = new Intent(Intent.ACTION_DIAL);
-                i.setData(Uri.parse("tel:0729093689"));
-                startActivity(i);
+                OutRequests.dialPhone(Home.this, "0724042756");
             }
         });
     }

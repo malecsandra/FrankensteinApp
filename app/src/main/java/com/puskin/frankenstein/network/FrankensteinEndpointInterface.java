@@ -1,5 +1,6 @@
 package com.puskin.frankenstein.network;
 
+import com.puskin.frankenstein.models.Clinic;
 import com.puskin.frankenstein.models.Doctor;
 import com.puskin.frankenstein.models.LoginObject;
 import com.puskin.frankenstein.models.User;
@@ -31,4 +32,7 @@ public interface FrankensteinEndpointInterface {
 
     @GET("doctors")
     Call<RealmList<Doctor>> getDoctors();
+
+    @GET("clinics")
+    Call<RealmList<Clinic>> getClinics();
 }
