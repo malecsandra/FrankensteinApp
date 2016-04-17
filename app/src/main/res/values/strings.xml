@@ -5,4 +5,6 @@
     <string name="closeDrawer">Drawer is Closed</string>
     <string name="drawer_open">Drawer is open</string>
     <string name="drawer_close">Drawer is closed</string>
+
+    <string name="reminder_text">Pill reminder</string>
 </resources>

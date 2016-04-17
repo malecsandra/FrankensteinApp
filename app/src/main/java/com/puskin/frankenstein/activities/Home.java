@@ -1,12 +1,17 @@
 package com.puskin.frankenstein.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -49,6 +54,8 @@ public class Home extends AppCompatActivity {
     TextView userEmailText;
 
     Realm realm;
+
+    private static final int TELEPHONE_REQUEST = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +104,16 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Home.this, Locations.class);
+                startActivity(i);
+            }
+        });
+
+        linearLayoutContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(Intent.ACTION_DIAL);
+                i.setData(Uri.parse("tel:0729093689"));
                 startActivity(i);
             }
         });
