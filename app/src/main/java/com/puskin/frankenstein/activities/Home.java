@@ -159,7 +159,9 @@ public class Home extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
 
                     case R.id.analize:
-                        Toast.makeText(getApplicationContext(), "Analize Selected", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "Analize Selected", Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(Home.this, LaboratoryTests.class);
+                        startActivity(i);
                         return true;
 
                     default:
