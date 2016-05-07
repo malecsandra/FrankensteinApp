@@ -20,13 +20,13 @@
             android:layout_height="match_parent">
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/rw_doctors"
+                android:id="@+id/rv_appointments"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical" />
 
             <ProgressBar
-                android:id="@+id/pbDoctor"
+                android:id="@+id/pbAppointment"
                 style="@style/Widget.AppCompat.ProgressBar"
                 android:layout_width="75dp"
                 android:layout_height="75dp"

@@ -33,7 +33,8 @@
         <activity android:name=".activities.PillReminder" />
         <activity android:name=".activities.Locations" />
         <activity android:name=".activities.ClinicActivity" />
-        <activity android:name=".activities.LaboratoryTests"></activity>
+        <activity android:name=".activities.LaboratoryTests" />
+        <activity android:name=".activities.AppointmentList"></activity>
     </application>
 
 </manifest>

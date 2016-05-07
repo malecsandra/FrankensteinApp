@@ -165,7 +165,9 @@ public class Home extends AppCompatActivity {
                         return true;
 
                     default:
-                        Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
+                        Intent j = new Intent(Home.this, AppointmentList.class);
+                        startActivity(j);
                         return true;
                 }
             }

@@ -73,8 +73,7 @@ public class ClinicAdapter extends RecyclerView.Adapter<ClinicAdapter.ClinicHold
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.clinic_item, parent, false);
         // set the view's size, margins, paddings and layout parameters
-        ClinicHolder vh = new ClinicHolder(v);
-        return vh;
+        return new ClinicHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)

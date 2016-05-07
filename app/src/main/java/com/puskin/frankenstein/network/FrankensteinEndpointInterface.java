@@ -1,5 +1,6 @@
 package com.puskin.frankenstein.network;
 
+import com.puskin.frankenstein.models.AppointmentModel;
 import com.puskin.frankenstein.models.AppointmentTestSet;
 import com.puskin.frankenstein.models.Clinic;
 import com.puskin.frankenstein.models.Doctor;
@@ -39,4 +40,7 @@ public interface FrankensteinEndpointInterface {
 
     @GET("medicaltests/{person_id}")
     Call<ArrayList<AppointmentTestSet>> getLaboratoryTests(@Path("person_id") int personID);
+
+    @GET("appointments/{person_id}")
+    Call<ArrayList<AppointmentModel>> getAppointments(@Path("person_id") int personID);
 }

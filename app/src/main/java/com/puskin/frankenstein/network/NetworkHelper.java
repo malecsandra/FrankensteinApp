@@ -8,11 +8,13 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.puskin.frankenstein.events.AppointmentEvent;
 import com.puskin.frankenstein.events.ClinicEvent;
 import com.puskin.frankenstein.events.DoctorEvent;
 import com.puskin.frankenstein.events.LoginEvent;
 import com.puskin.frankenstein.events.RegisterEvent;
 import com.puskin.frankenstein.events.TestListEvent;
+import com.puskin.frankenstein.models.AppointmentModel;
 import com.puskin.frankenstein.models.AppointmentTestSet;
 import com.puskin.frankenstein.models.Clinic;
 import com.puskin.frankenstein.models.Doctor;
@@ -28,9 +30,7 @@ import java.util.concurrent.TimeUnit;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
-import io.realm.UserRealmProxy;
 import okhttp3.OkHttpClient;
-import okhttp3.internal.http.RetryableSink;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -279,6 +279,62 @@ public class NetworkHelper {
             public void onFailure(Call<ArrayList<AppointmentTestSet>> call, Throwable t) {
                 Log.d("DBG", "Fail: getLabResults");
                 EventBus.getDefault().post(new TestListEvent(null, -1, "Test List Request Failed"));
+            }
+        });
+    }
+
+    public static void getAppointments(int userID) {
+        Gson gson = new GsonBuilder()
+                .setExclusionStrategies(new ExclusionStrategy() {
+
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getDeclaringClass().equals(RealmObject.class);
+                    }
+
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
+                .build();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        FrankensteinEndpointInterface feInterface = retrofit.create(FrankensteinEndpointInterface.class);
+
+        Call<ArrayList<AppointmentModel>> call = feInterface.getAppointments(userID);
+        call.enqueue(new Callback<ArrayList<AppointmentModel>>() {
+
+
+            @Override
+            public void onResponse(Call<ArrayList<AppointmentModel>> call, Response<ArrayList<AppointmentModel>> response) {
+                Log.d("DBG", "onResponse: " + response.code() + ' ' + response.message());
+                if (response.code() == 200) {
+                    EventBus.getDefault().post(new AppointmentEvent(response.body(), response.code(), response.message()));
+                } else {
+                    EventBus.getDefault().post(new AppointmentEvent(null, response.code(), response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<AppointmentModel>> call, Throwable t) {
+                Log.d("DBG", "Fail: getAppointments");
+                EventBus.getDefault().post(new AppointmentEvent(null, -1, "Appointment List Request Failed"));
             }
         });
     }

@@ -15,11 +15,11 @@
             android:title="Laboratory Tests"
             android:icon="@drawable/test_tube"/>
 
-        <item
-            android:id="@+id/tratament"
-            android:checked="true"
-            android:title="Medical Treatment"
-            android:icon="@drawable/prescription"/>
+        <!--<item-->
+            <!--android:id="@+id/tratament"-->
+            <!--android:checked="true"-->
+            <!--android:title="Medical Treatment"-->
+            <!--android:icon="@drawable/prescription"/>-->
 
 
 
