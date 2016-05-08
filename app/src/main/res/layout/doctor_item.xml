@@ -80,6 +80,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/textView_buttonSchedule"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/linearLayout_docInfo"
@@ -92,6 +93,7 @@
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
+
     </android.support.percent.PercentRelativeLayout>
 
 </android.support.v7.widget.CardView>

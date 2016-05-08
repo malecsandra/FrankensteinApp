@@ -1,5 +1,8 @@
 package com.puskin.frankenstein.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import io.realm.RealmObject;
@@ -8,7 +11,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by Alexandra on 09-Apr-16.
  */
-public class Speciality extends RealmObject {
+public class Speciality extends RealmObject implements Parcelable {
     @PrimaryKey
     @SerializedName("SpecialityId")
     private int specialityId;
@@ -39,4 +42,32 @@ public class Speciality extends RealmObject {
 
     public Speciality() {
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.specialityId);
+        dest.writeString(this.specialityName);
+    }
+
+    protected Speciality(Parcel in) {
+        this.specialityId = in.readInt();
+        this.specialityName = in.readString();
+    }
+
+    public static final Parcelable.Creator<Speciality> CREATOR = new Parcelable.Creator<Speciality>() {
+        @Override
+        public Speciality createFromParcel(Parcel source) {
+            return new Speciality(source);
+        }
+
+        @Override
+        public Speciality[] newArray(int size) {
+            return new Speciality[size];
+        }
+    };
 }

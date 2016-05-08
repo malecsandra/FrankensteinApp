@@ -1,5 +1,8 @@
 package com.puskin.frankenstein.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import io.realm.RealmObject;
@@ -8,7 +11,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by Alexandra on 09-Apr-16.
  */
-public class Doctor extends RealmObject {
+public class Doctor extends RealmObject implements Parcelable {
     @PrimaryKey
     @SerializedName("DoctorId")
     private int doctorId;
@@ -135,4 +138,48 @@ public class Doctor extends RealmObject {
 
     public Doctor() {
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.doctorId);
+        dest.writeString(this.name);
+        dest.writeString(this.surname);
+        dest.writeInt(this.specialityId);
+        dest.writeInt(this.locationId);
+        dest.writeString(this.stamp);
+        dest.writeString(this.email);
+        dest.writeString(this.phoneNumber);
+        dest.writeParcelable(this.speciality, flags);
+        dest.writeParcelable(this.clinic, flags);
+    }
+
+    protected Doctor(Parcel in) {
+        this.doctorId = in.readInt();
+        this.name = in.readString();
+        this.surname = in.readString();
+        this.specialityId = in.readInt();
+        this.locationId = in.readInt();
+        this.stamp = in.readString();
+        this.email = in.readString();
+        this.phoneNumber = in.readString();
+        this.speciality = in.readParcelable(Speciality.class.getClassLoader());
+        this.clinic = in.readParcelable(Clinic.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Doctor> CREATOR = new Parcelable.Creator<Doctor>() {
+        @Override
+        public Doctor createFromParcel(Parcel source) {
+            return new Doctor(source);
+        }
+
+        @Override
+        public Doctor[] newArray(int size) {
+            return new Doctor[size];
+        }
+    };
 }

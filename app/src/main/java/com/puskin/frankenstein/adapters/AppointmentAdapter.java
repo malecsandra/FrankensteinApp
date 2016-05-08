@@ -1,11 +1,14 @@
 package com.puskin.frankenstein.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -82,10 +85,9 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         }
 
         public void bind(final AppointmentModel appointmentModel, final Context context) {
-            if(appointmentModel.getStatusId() == 0){
+            if (appointmentModel.getStatusId() == 0) {
                 root.setCardBackgroundColor(context.getResources().getColor(R.color.colorAppointment));
-            }
-            else{
+            } else {
                 root.setCardBackgroundColor(Color.parseColor("#f9f9f9"));
             }
 
@@ -133,6 +135,43 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(context, "Clicked info", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            appInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(appointmentModel.getAppointmentDetailsList().size() > 0) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                        dialogBuilder.setTitle("Details");
+                        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+                        View dialogView = inflater.inflate(R.layout.appointmet_details, null);
+                        TextView diagnosticText = (TextView) dialogView.findViewById(R.id.textView_diagnostic);
+                        TextView commentsText = (TextView) dialogView.findViewById(R.id.textView_comments);
+
+                        diagnosticText.setText(appointmentModel.getAppointmentDetailsList().get(0).getDiagnostic());
+
+                        String comments = appointmentModel.getAppointmentDetailsList().get(0).getComments();
+                        if (comments != null && comments.length() > 0)
+                            commentsText.setText(appointmentModel.getAppointmentDetailsList().get(0).getComments());
+                        else
+                            commentsText.setText("N/A");
+
+                        dialogBuilder.setView(dialogView);
+
+                        AlertDialog alertDialog = dialogBuilder.create();
+
+                        alertDialog.show();
+                    }
+                    else{
+                        Toast.makeText(context, "No Details to show", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }

@@ -9,22 +9,27 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.puskin.frankenstein.events.AppointmentEvent;
+import com.puskin.frankenstein.events.AppointmentSubmitedEvent;
+import com.puskin.frankenstein.events.AvailableDatesEvent;
 import com.puskin.frankenstein.events.ClinicEvent;
 import com.puskin.frankenstein.events.DoctorEvent;
 import com.puskin.frankenstein.events.LoginEvent;
 import com.puskin.frankenstein.events.RegisterEvent;
 import com.puskin.frankenstein.events.TestListEvent;
 import com.puskin.frankenstein.models.AppointmentModel;
+import com.puskin.frankenstein.models.AppointmentSubmitModel;
 import com.puskin.frankenstein.models.AppointmentTestSet;
 import com.puskin.frankenstein.models.Clinic;
 import com.puskin.frankenstein.models.Doctor;
 import com.puskin.frankenstein.models.LoginObject;
 import com.puskin.frankenstein.models.MedicalTestModel;
+import com.puskin.frankenstein.models.ScheduleModel;
 import com.puskin.frankenstein.models.User;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import io.realm.Realm;
@@ -335,6 +340,118 @@ public class NetworkHelper {
             public void onFailure(Call<ArrayList<AppointmentModel>> call, Throwable t) {
                 Log.d("DBG", "Fail: getAppointments");
                 EventBus.getDefault().post(new AppointmentEvent(null, -1, "Appointment List Request Failed"));
+            }
+        });
+    }
+
+    public static void checkAvailableTimes(final ScheduleModel scheduleModel) {
+        Gson gson = new GsonBuilder()
+                .setExclusionStrategies(new ExclusionStrategy() {
+
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getDeclaringClass().equals(RealmObject.class);
+                    }
+
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
+                .build();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        FrankensteinEndpointInterface feInterface = retrofit.create(FrankensteinEndpointInterface.class);
+
+        Call<ArrayList<Date>> call = feInterface.checkTimes(scheduleModel);
+        call.enqueue(new Callback<ArrayList<Date>>() {
+
+            @Override
+            public void onResponse(Call<ArrayList<Date>> call, Response<ArrayList<Date>> response) {
+                Log.d("DBG", "onResponse: " + response.message() + " " + response.code());
+                if(response.code() == 200){
+                    EventBus.getDefault().post(new AvailableDatesEvent(response.body(), response.code(), response.message()));
+                }
+                else{
+                    EventBus.getDefault().post(new AvailableDatesEvent(null, response.code(), response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Date>> call, Throwable t) {
+                EventBus.getDefault().post(new AvailableDatesEvent(null, -1, "Request completely failed"));
+
+            }
+        });
+    }
+
+    public static void createAppointmment(final AppointmentSubmitModel appointmentSubmitModel) {
+        Gson gson = new GsonBuilder()
+                .setExclusionStrategies(new ExclusionStrategy() {
+
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getDeclaringClass().equals(RealmObject.class);
+                    }
+
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
+                .build();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        FrankensteinEndpointInterface feInterface = retrofit.create(FrankensteinEndpointInterface.class);
+
+        Call<Void> call = feInterface.addAppointment(appointmentSubmitModel);
+        call.enqueue(new Callback<Void>() {
+
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.d("DBG", "onResponse: " + response.message() + " " + response.code());
+                if(response.code() == 200 || response.code() == 204){
+                    EventBus.getDefault().post(new AppointmentSubmitedEvent(response.code(), response.message()));
+                }
+                else{
+                    EventBus.getDefault().post(new AppointmentSubmitedEvent(response.code(), response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                EventBus.getDefault().post(new AppointmentSubmitedEvent(-1, "Request completely failed"));
+
             }
         });
     }

@@ -7,8 +7,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.puskin.frankenstein.R;
+import com.puskin.frankenstein.events.DoctorClickEvent;
 import com.puskin.frankenstein.models.Doctor;
 
+import org.greenrobot.eventbus.EventBus;
 import org.w3c.dom.Text;
 
 import io.realm.RealmList;
@@ -29,6 +31,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.DoctorHold
         public TextView doctorPhoneno;
         public TextView doctorEmail;
         public TextView doctorClinic;
+        public TextView scheduleAppointment;
 
         public DoctorHolder(View v) {
             super(v);
@@ -36,6 +39,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.DoctorHold
             doctorSpeciality = (TextView) v.findViewById(R.id.tv_speciality);
             doctorEmail = (TextView) v.findViewById(R.id.tv_email);
             doctorClinic = (TextView) v.findViewById(R.id.tv_clinic);
+            scheduleAppointment = (TextView) v.findViewById(R.id.textView_buttonSchedule);
         }
     }
 
@@ -47,7 +51,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.DoctorHold
     // Create new views (invoked by the layout manager)
     @Override
     public DoctorAdapter.DoctorHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
+                                                         int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.doctor_item, parent, false);
@@ -61,12 +65,18 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.DoctorHold
     public void onBindViewHolder(DoctorHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        Doctor doctor = doctorList.get(position);
+        final Doctor doctor = doctorList.get(position);
         holder.doctorName.setText(doctor.getName() + ' ' + doctor.getSurname());
         holder.doctorSpeciality.setText(doctor.getSpeciality().getSpecialityName());
         holder.doctorEmail.setText(doctor.getEmail());
         holder.doctorClinic.setText(doctor.getClinic().getClinicName());
 
+        holder.scheduleAppointment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new DoctorClickEvent(doctor));
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)

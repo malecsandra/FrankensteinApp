@@ -1,5 +1,6 @@
 package com.puskin.frankenstein.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.widget.ProgressBar;
 
 import com.puskin.frankenstein.R;
 import com.puskin.frankenstein.adapters.DoctorAdapter;
+import com.puskin.frankenstein.events.DoctorClickEvent;
 import com.puskin.frankenstein.events.DoctorEvent;
 import com.puskin.frankenstein.models.Doctor;
 import com.puskin.frankenstein.network.NetworkHelper;
@@ -68,6 +70,14 @@ public class DoctorList extends AppCompatActivity {
             doctors = doctorEvent.getDoctors();
             doctorAdapter.setDoctorList(doctors);
         }
+    }
+
+    @Subscribe
+    public void onDoctorClickEvent(DoctorClickEvent clickEvent){
+        Intent i = new Intent(this, AppointmentCreator.class);
+        i.putExtra("doctor", clickEvent.getDoctor());
+
+        startActivity(i);
     }
 
     @Override

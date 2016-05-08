@@ -34,7 +34,8 @@
         <activity android:name=".activities.Locations" />
         <activity android:name=".activities.ClinicActivity" />
         <activity android:name=".activities.LaboratoryTests" />
-        <activity android:name=".activities.AppointmentList"></activity>
+        <activity android:name=".activities.AppointmentList" />
+        <activity android:name=".activities.AppointmentCreator"></activity>
     </application>
 
 </manifest>

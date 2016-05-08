@@ -1,13 +1,16 @@
 package com.puskin.frankenstein.network;
 
 import com.puskin.frankenstein.models.AppointmentModel;
+import com.puskin.frankenstein.models.AppointmentSubmitModel;
 import com.puskin.frankenstein.models.AppointmentTestSet;
 import com.puskin.frankenstein.models.Clinic;
 import com.puskin.frankenstein.models.Doctor;
 import com.puskin.frankenstein.models.LoginObject;
+import com.puskin.frankenstein.models.ScheduleModel;
 import com.puskin.frankenstein.models.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import io.realm.RealmList;
 import retrofit2.Call;
@@ -43,4 +46,13 @@ public interface FrankensteinEndpointInterface {
 
     @GET("appointments/{person_id}")
     Call<ArrayList<AppointmentModel>> getAppointments(@Path("person_id") int personID);
+
+
+    @Headers("Content-Type: application/json")
+    @POST("schedule")
+    Call<ArrayList<Date>> checkTimes(@Body ScheduleModel scheduleModel);
+
+    @Headers("Content-Type: application/json")
+    @POST("appointments")
+    Call<Void> addAppointment(@Body AppointmentSubmitModel appointmentSubmitModel);
 }
