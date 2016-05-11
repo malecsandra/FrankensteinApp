@@ -1,7 +1,6 @@
 package com.puskin.frankenstein.activities;
 
 import android.content.Intent;
-import android.net.nsd.NsdManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -36,6 +35,8 @@ public class LogIn extends AppCompatActivity {
     ProgressBar pbLogin;
     @Bind(R.id.tvSignUp)
     TextView tvSignUp;
+    @Bind(R.id.button_alarmTests)
+    Button buttonAlarmTests;
 
 
     @Override
@@ -55,11 +56,19 @@ public class LogIn extends AppCompatActivity {
             }
         });
 
-        tvSignUp.setOnClickListener(new View.OnClickListener(){
+        tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
-        public void onClick(View v){
+            public void onClick(View v) {
                 Intent i = new Intent(LogIn.this, Register.class);
                 startActivityForResult(i, REQUEST_CODE);
+            }
+        });
+
+        buttonAlarmTests.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(LogIn.this, PillReminder.class);
+                startActivity(i);
             }
         });
     }
@@ -91,7 +100,7 @@ public class LogIn extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             etUserName.setText(data.getStringExtra("username"));
         }
     }
