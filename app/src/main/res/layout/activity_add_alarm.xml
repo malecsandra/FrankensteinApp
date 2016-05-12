@@ -35,17 +35,39 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                android:text="Click to set start date and time" />
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:id="@+id/textView_alarmDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:visibility="gone"
+                    android:textAppearance="@android:style/TextAppearance.Large"/>
+
+                <TextView
+                    android:id="@+id/textView_setAlarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Click here to set start date and time"
+                    android:background="@drawable/bg_button_selector"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false"
+                    android:padding="4dp"
+                    android:gravity="center"
+                    android:textAppearance="@android:style/TextAppearance.Large"/>
+
+            </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/editText_totalDoses"
@@ -59,7 +81,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="0dp"
@@ -72,6 +95,7 @@
                         android:layout_height="wrap_content"
                         android:hint="Periodicity"
                         android:inputType="number"
+                        android:gravity="center"
                         android:textAppearance="@android:style/TextAppearance.Large" />
 
                 </android.support.design.widget.TextInputLayout>
@@ -89,7 +113,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Save" />
+                android:text="Save"
+                android:background="@drawable/bg_button_selector"
+                android:textColor="@android:color/white"/>
+
         </LinearLayout>
 
     </LinearLayout>

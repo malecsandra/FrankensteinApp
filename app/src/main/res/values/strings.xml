@@ -7,4 +7,13 @@
     <string name="drawer_close">Drawer is closed</string>
 
     <string name="reminder_text">Pill reminder</string>
+
+    <string-array name="periodicitySizes">
+        <item>Minute(s)</item>
+        <item>Hour(s)</item>
+        <item>Day(s)</item>
+        <item>Week(s)</item>
+        <item>Month(s)</item>
+    </string-array>
+
 </resources>

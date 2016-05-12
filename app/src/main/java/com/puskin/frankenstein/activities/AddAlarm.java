@@ -1,34 +1,40 @@
 package com.puskin.frankenstein.activities;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.puskin.frankenstein.R;
-import com.puskin.frankenstein.adapters.DoctorAdapter;
 import com.puskin.frankenstein.models.AlarmModel;
-import com.puskin.frankenstein.models.Doctor;
+import com.puskin.frankenstein.models.ScheduleModel;
+import com.puskin.frankenstein.network.NetworkHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.realm.Realm;
-import io.realm.RealmList;
 
 public class AddAlarm extends AppCompatActivity {
-    // TODO Launch dialog to select date on click on the text
-    // TODO When date has been selected update the existing date and launch time dialog.
-    // TODO Create interval measurement unit spinner values and corelation function. Use Calendar.year and such
-    // TODO Maybe make some validations.
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -48,6 +54,10 @@ public class AddAlarm extends AppCompatActivity {
     Realm realm;
     Date selectedDate;
     int selectedMeasure;
+    @Bind(R.id.textView_alarmDate)
+    TextView textViewAlarmDate;
+    @Bind(R.id.textView_setAlarm)
+    TextView textViewSetAlarm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,23 +92,125 @@ public class AddAlarm extends AppCompatActivity {
                 saveAlarm();
             }
         });
+
+        textViewSetAlarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePicker();
+            }
+        });
+
+        String[] spinnerArray = getResources().getStringArray(R.array.periodicitySizes);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPeriodType.setAdapter(spinnerArrayAdapter);
+
+        spinnerPeriodType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("DBG", "Spinner Item Selected");
+                selectedMeasure = parsePeriodicityMeasure((String)parent.getItemAtPosition(position));
+                Log.d("DBG", "Selected: " + selectedMeasure);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
+    int parsePeriodicityMeasure(String periodicity){
+        switch(periodicity){
+            case "Minute(s)":
+                Log.d("DBG", "Selecting MINUTE " + Calendar.MINUTE);
+                return Calendar.MINUTE;
+            case "Hour(s)":
+                Log.d("DBG", "Selecting HOUR_OF_DAY " + Calendar.HOUR_OF_DAY);
+                return Calendar.HOUR_OF_DAY;
+            case "Day(s)":
+                Log.d("DBG", "Selecting DAY_OF_MONTH " + Calendar.DAY_OF_MONTH);
+                return Calendar.DAY_OF_MONTH;
+            case "Week(s)":
+                Log.d("DBG", "Selecting WEEK_OF_MONTH " + Calendar.WEEK_OF_MONTH);
+                return Calendar.WEEK_OF_MONTH;
+            case "Month(s)":
+                Log.d("DBG", "Selecting MONTH " + Calendar.MONTH);
+                return Calendar.MONTH;
+            default:
+                Log.d("DBG", "Selecting DEFAULT " + -1);
+                return -1;
+        }
+    }
+
+    void showDatePicker(){
+        final Calendar nowCalendar = new GregorianCalendar();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(AddAlarm.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Log.d("DBG", "Potato");
+                Calendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+                selectedDate = calendar.getTime();
+                showTimePicker();
+            }
+
+        }, nowCalendar.get(Calendar.YEAR), nowCalendar.get(Calendar.MONTH), nowCalendar.get(Calendar.DAY_OF_MONTH));
+
+        datePickerDialog.show();
+    }
+
+    void showTimePicker(){
+        final Calendar nowCalendar = new GregorianCalendar();
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(AddAlarm.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTime(selectedDate);
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                selectedDate = calendar.getTime();
+
+                setDateView();
+            }
+        }, nowCalendar.get(Calendar.HOUR_OF_DAY), nowCalendar.get(Calendar.MINUTE), true);
+
+        timePickerDialog.show();
+    }
+
+    void setDateView(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy' ; 'HH:mm");
+        textViewAlarmDate.setText(sdf.format(selectedDate));
+        textViewSetAlarm.setText("Change");
+        textViewAlarmDate.setVisibility(View.VISIBLE);
+    }
+
+    boolean validateFields(){
+        return editTextDrugName.getText().toString().length() > 0 &&
+                textViewAlarmDate.getText().toString().length() > 0 &&
+                editTextTotalDoses.getText().toString().length() > 0 &&
+                editTextPeriodValue.getText().toString().length() > 0;
+    }
     void saveAlarm() {
-        AlarmModel alarmModel = new AlarmModel();
-        alarmModel.setAlarmID(UUID.randomUUID().toString());
-        alarmModel.setDrugName(editTextDrugName.getText().toString());
-        alarmModel.setStartDate(selectedDate);
-        alarmModel.setDoses(Integer.parseInt(editTextTotalDoses.getText().toString()));
-        alarmModel.setCurrentDose(1);
-        alarmModel.setPeriodicity((Integer.parseInt(editTextPeriodValue.getText().toString())));
-        alarmModel.setPeriodicity(selectedMeasure);
-        alarmModel.setShowDetails(false);
+        if(validateFields()) {
+            AlarmModel alarmModel = new AlarmModel();
+            alarmModel.setAlarmID(UUID.randomUUID().toString());
+            alarmModel.setDrugName(editTextDrugName.getText().toString());
+            alarmModel.setStartDate(selectedDate);
+            alarmModel.setDoses(Integer.parseInt(editTextTotalDoses.getText().toString()));
+            alarmModel.setCurrentDose(1);
+            alarmModel.setPeriodicity((Integer.parseInt(editTextPeriodValue.getText().toString())));
+            alarmModel.setPeriodicityMeasure(selectedMeasure);
+            alarmModel.setShowDetails(false);
 
-        realm.beginTransaction();
-        realm.copyToRealm(alarmModel);
-        realm.commitTransaction();
+            realm.beginTransaction();
+            realm.copyToRealm(alarmModel);
+            realm.commitTransaction();
 
-        finish();
+            finish();
+        }
+        else{
+            Toast.makeText(AddAlarm.this, "Complete all of the fields please", Toast.LENGTH_SHORT).show();
+        }
     }
 }

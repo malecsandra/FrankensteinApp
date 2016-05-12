@@ -12,13 +12,19 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.Home" />
+        <activity
+            android:name=".activities.Home"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".examples.ExampleHub"
-            android:label="@string/examples_hub" />
-        <activity android:name=".examples.DrawerActivity" />
+            android:label="@string/examples_hub"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".examples.DrawerActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.LogIn"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,15 +34,33 @@
         </activity>
         <activity
             android:name=".activities.Register"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name=".activities.DoctorList" />
-        <activity android:name=".activities.PillReminder" />
-        <activity android:name=".activities.Locations" />
-        <activity android:name=".activities.ClinicActivity" />
-        <activity android:name=".activities.LaboratoryTests" />
-        <activity android:name=".activities.AppointmentList" />
-        <activity android:name=".activities.AppointmentCreator" />
-        <activity android:name=".activities.AddAlarm"></activity>
+        <activity
+            android:name=".activities.DoctorList"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.PillReminder"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.Locations"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.ClinicActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.LaboratoryTests"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.AppointmentList"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.AppointmentCreator"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.AddAlarm"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"  />
     </application>
 
 </manifest>

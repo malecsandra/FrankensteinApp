@@ -5,15 +5,21 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.puskin.frankenstein.R;
+import com.puskin.frankenstein.adapters.AlarmAdapter;
+import com.puskin.frankenstein.models.AlarmModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class PillReminder extends AppCompatActivity {
     // TODO Get the alarms from the realm and setup the recyclerview
@@ -29,6 +35,8 @@ public class PillReminder extends AppCompatActivity {
     @Bind(R.id.button_addAlarm)
     FloatingActionButton buttonAddAlarm;
 
+    Realm realm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,14 +44,19 @@ public class PillReminder extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setupUI();
+    }
 
-        buttonAddAlarm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(PillReminder.this, AddAlarm.class);
-                startActivity(i);
-            }
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        realm = Realm.getDefaultInstance();
+        RealmList<AlarmModel> alarms = new RealmList<>();
+        RealmResults<AlarmModel> alarmResults = realm.where(AlarmModel.class).findAll();
+        for(AlarmModel alarm : alarmResults)
+            alarms.add(alarm);
+
+        AlarmAdapter alarmAdapter = new AlarmAdapter(this, realm, alarms);
+        recyclerViewAlarms.setAdapter(alarmAdapter);
     }
 
     @Override
@@ -61,5 +74,16 @@ public class PillReminder extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Pill Reminder");
+
+        buttonAddAlarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(PillReminder.this, AddAlarm.class);
+                startActivity(i);
+            }
+        });
+
+        LinearLayoutManager llManager = new LinearLayoutManager(this);
+        recyclerViewAlarms.setLayoutManager(llManager);
     }
 }
