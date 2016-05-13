@@ -89,7 +89,8 @@ public class AlarmModel extends RealmObject {
     public Date calculateNextAlarm(){
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(startDate);
-        calendar.add(periodicityMeasure, currentDose * periodicity);
+
+        calendar.add(periodicityMeasure, (currentDose - 1) * periodicity);
 
         return calendar.getTime();
     }

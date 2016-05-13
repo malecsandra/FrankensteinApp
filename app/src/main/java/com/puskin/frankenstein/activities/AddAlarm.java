@@ -1,7 +1,10 @@
 package com.puskin.frankenstein.activities;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.DrawerLayout;
@@ -19,10 +22,9 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.puskin.frankenstein.AlarmReceiver;
 import com.puskin.frankenstein.R;
 import com.puskin.frankenstein.models.AlarmModel;
-import com.puskin.frankenstein.models.ScheduleModel;
-import com.puskin.frankenstein.network.NetworkHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -89,7 +91,7 @@ public class AddAlarm extends AppCompatActivity {
         buttonSaveAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveAlarm();
+                saveAndSetAlarm();
             }
         });
 
@@ -155,6 +157,7 @@ public class AddAlarm extends AppCompatActivity {
             }
 
         }, nowCalendar.get(Calendar.YEAR), nowCalendar.get(Calendar.MONTH), nowCalendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
 
         datePickerDialog.show();
     }
@@ -191,8 +194,9 @@ public class AddAlarm extends AppCompatActivity {
                 editTextTotalDoses.getText().toString().length() > 0 &&
                 editTextPeriodValue.getText().toString().length() > 0;
     }
-    void saveAlarm() {
+    void saveAndSetAlarm() {
         if(validateFields()) {
+        // Save alarm
             AlarmModel alarmModel = new AlarmModel();
             alarmModel.setAlarmID(UUID.randomUUID().toString());
             alarmModel.setDrugName(editTextDrugName.getText().toString());
@@ -206,6 +210,20 @@ public class AddAlarm extends AppCompatActivity {
             realm.beginTransaction();
             realm.copyToRealm(alarmModel);
             realm.commitTransaction();
+
+            // Set Alarm;
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+            Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+            alarmIntent.putExtra("alarmID", alarmModel.getAlarmID());
+
+            PendingIntent pendingAlarmIntent = PendingIntent.getBroadcast(this, AlarmReceiver.ALARM_REQUEST, alarmIntent, 0);
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(alarmModel.calculateNextAlarm());
+
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingAlarmIntent);
+
+            Log.d("DBG", "Alarm is set");
 
             finish();
         }
