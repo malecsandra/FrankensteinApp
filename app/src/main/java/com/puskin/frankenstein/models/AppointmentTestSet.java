@@ -15,6 +15,8 @@ public class AppointmentTestSet implements ParentListItem{
     private int appointmentID;
     @SerializedName("MedicalTestDate")
     private Date medicalTestDate;
+    @SerializedName("Diagnostic")
+    private String diagnostic;
     @SerializedName("Doctor")
     private String doctor;
     @SerializedName("Speciality")
@@ -22,9 +24,27 @@ public class AppointmentTestSet implements ParentListItem{
     @SerializedName("TestList")
     private ArrayList<MedicalTestModel> testList;
 
+    public AppointmentTestSet(int appointmentID, Date medicalTestDate, String diagnostic, String doctor, String speciality, ArrayList<MedicalTestModel> testList) {
+        this.appointmentID = appointmentID;
+        this.medicalTestDate = medicalTestDate;
+        this.diagnostic = diagnostic;
+        this.doctor = doctor;
+        this.speciality = speciality;
+        this.testList = testList;
+    }
+
+    public String getDiagnostic() {
+        return diagnostic;
+    }
+
+    public void setDiagnostic(String diagnostic) {
+        this.diagnostic = diagnostic;
+    }
+
     public AppointmentTestSet(int appointmentID, Date medicalTestDate, String doctor, String speciality, ArrayList<MedicalTestModel> testList) {
         this.appointmentID = appointmentID;
         this.medicalTestDate = medicalTestDate;
+
         this.doctor = doctor;
         this.speciality = speciality;
         this.testList = testList;

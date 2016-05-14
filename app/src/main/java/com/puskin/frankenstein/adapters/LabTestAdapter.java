@@ -19,6 +19,8 @@ import com.puskin.frankenstein.R;
 import com.puskin.frankenstein.models.AppointmentTestSet;
 import com.puskin.frankenstein.models.MedicalTestModel;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +74,8 @@ public class LabTestAdapter extends ExpandableRecyclerAdapter<LabTestAdapter.App
         TextView doctorName;
         @Bind(R.id.textView_speciality)
         TextView specialityText;
+        @Bind(R.id.textView_tsdiagnostic)
+        TextView diagnosticText;
 
         public AppointmentTestSetHolder(View itemView) {
             super(itemView);
@@ -83,6 +87,7 @@ public class LabTestAdapter extends ExpandableRecyclerAdapter<LabTestAdapter.App
             dateText.setText(dateFormat.format(appointmentTestSet.getMedicalTestDate()));
             doctorName.setText(appointmentTestSet.getDoctor());
             specialityText.setText(appointmentTestSet.getSpeciality());
+            diagnosticText.setText(appointmentTestSet.getDiagnostic());
         }
     }
 

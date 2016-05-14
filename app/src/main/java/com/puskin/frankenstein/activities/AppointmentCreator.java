@@ -173,6 +173,11 @@ public class AppointmentCreator extends AppCompatActivity {
                 buttonSubmitAppointment.setVisibility(View.VISIBLE);
                 Log.d("DBG", "Available Dates: " + event.getAvailableDates().size());
             }
+            else
+            {
+                progressBarAvailableHours.setVisibility(View.GONE);
+                Toast.makeText(this, "No available hours. Choose another date.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

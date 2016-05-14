@@ -20,6 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
             android:padding="16dp">
 
             <android.support.design.widget.TextInputLayout
@@ -31,7 +33,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Drug"
-                    android:textAppearance="@android:style/TextAppearance.Large" />
+                    android:ems="10"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -52,7 +54,7 @@
 
                 <TextView
                     android:id="@+id/textView_setAlarm"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Click here to set start date and time"
                     android:background="@drawable/bg_button_selector"
@@ -60,7 +62,7 @@
                     android:textAllCaps="false"
                     android:padding="4dp"
                     android:gravity="center"
-                    android:textAppearance="@android:style/TextAppearance.Large"/>
+                    android:textAppearance="@android:style/TextAppearance.Medium"/>
 
             </LinearLayout>
 
@@ -74,8 +76,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Doses"
-                    android:inputType="number"
-                    android:textAppearance="@android:style/TextAppearance.Large" />
+                    android:ems="10"
+                    android:inputType="number"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -95,8 +97,7 @@
                         android:layout_height="wrap_content"
                         android:hint="Periodicity"
                         android:inputType="number"
-                        android:gravity="center"
-                        android:textAppearance="@android:style/TextAppearance.Large" />
+                        android:ems="10"/>
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -112,10 +113,12 @@
                 android:id="@+id/button_saveAlarm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="48dp"
                 android:text="Save"
                 android:background="@drawable/bg_button_selector"
-                android:textColor="@android:color/white"/>
+                android:textColor="@android:color/white"
+                android:layout_gravity="right"
+                android:padding="4dp"/>
 
         </LinearLayout>
 
