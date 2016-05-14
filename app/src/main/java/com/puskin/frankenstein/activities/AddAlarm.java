@@ -60,6 +60,8 @@ public class AddAlarm extends AppCompatActivity {
     TextView textViewAlarmDate;
     @Bind(R.id.textView_setAlarm)
     TextView textViewSetAlarm;
+    @Bind(R.id.editText_pillsPerDose)
+    TextInputEditText editTextPillsPerDose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +113,7 @@ public class AddAlarm extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("DBG", "Spinner Item Selected");
-                selectedMeasure = parsePeriodicityMeasure((String)parent.getItemAtPosition(position));
+                selectedMeasure = parsePeriodicityMeasure((String) parent.getItemAtPosition(position));
                 Log.d("DBG", "Selected: " + selectedMeasure);
             }
 
@@ -122,8 +124,8 @@ public class AddAlarm extends AppCompatActivity {
         });
     }
 
-    int parsePeriodicityMeasure(String periodicity){
-        switch(periodicity){
+    int parsePeriodicityMeasure(String periodicity) {
+        switch (periodicity) {
             case "Minute(s)":
                 Log.d("DBG", "Selecting MINUTE " + Calendar.MINUTE);
                 return Calendar.MINUTE;
@@ -145,7 +147,7 @@ public class AddAlarm extends AppCompatActivity {
         }
     }
 
-    void showDatePicker(){
+    void showDatePicker() {
         final Calendar nowCalendar = new GregorianCalendar();
         DatePickerDialog datePickerDialog = new DatePickerDialog(AddAlarm.this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -162,7 +164,7 @@ public class AddAlarm extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    void showTimePicker(){
+    void showTimePicker() {
         final Calendar nowCalendar = new GregorianCalendar();
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(AddAlarm.this, new TimePickerDialog.OnTimeSetListener() {
@@ -181,27 +183,30 @@ public class AddAlarm extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-    void setDateView(){
+    void setDateView() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy' ; 'HH:mm");
         textViewAlarmDate.setText(sdf.format(selectedDate));
         textViewSetAlarm.setText("Change");
         textViewAlarmDate.setVisibility(View.VISIBLE);
     }
 
-    boolean validateFields(){
+    boolean validateFields() {
         return editTextDrugName.getText().toString().length() > 0 &&
                 textViewAlarmDate.getText().toString().length() > 0 &&
                 editTextTotalDoses.getText().toString().length() > 0 &&
-                editTextPeriodValue.getText().toString().length() > 0;
+                editTextPeriodValue.getText().toString().length() > 0 &&
+                editTextPillsPerDose.getText().toString().length() > 0;
     }
+
     void saveAndSetAlarm() {
-        if(validateFields()) {
-        // Save alarm
+        if (validateFields()) {
+            // Save alarm
             AlarmModel alarmModel = new AlarmModel();
             alarmModel.setAlarmID(UUID.randomUUID().toString());
             alarmModel.setDrugName(editTextDrugName.getText().toString());
             alarmModel.setStartDate(selectedDate);
             alarmModel.setDoses(Integer.parseInt(editTextTotalDoses.getText().toString()));
+            alarmModel.setPillsPerDose(Integer.parseInt(editTextPillsPerDose.getText().toString()));
             alarmModel.setCurrentDose(1);
             alarmModel.setPeriodicity((Integer.parseInt(editTextPeriodValue.getText().toString())));
             alarmModel.setPeriodicityMeasure(selectedMeasure);
@@ -214,10 +219,12 @@ public class AddAlarm extends AppCompatActivity {
             // Set Alarm;
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
+            // This is the intentto create the pending intent with in order to delete it too
             Intent alarmIntent = new Intent(this, AlarmReceiver.class);
             alarmIntent.putExtra("alarmID", alarmModel.getAlarmID());
 
             PendingIntent pendingAlarmIntent = PendingIntent.getBroadcast(this, AlarmReceiver.ALARM_REQUEST, alarmIntent, 0);
+            //
             Calendar calendar = new GregorianCalendar();
             calendar.setTime(alarmModel.calculateNextAlarm());
 
@@ -226,8 +233,7 @@ public class AddAlarm extends AppCompatActivity {
             Log.d("DBG", "Alarm is set");
 
             finish();
-        }
-        else{
+        } else {
             Toast.makeText(AddAlarm.this, "Complete all of the fields please", Toast.LENGTH_SHORT).show();
         }
     }

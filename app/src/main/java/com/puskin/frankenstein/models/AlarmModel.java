@@ -5,17 +5,22 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by rakatan on 11.05.2016.
  */
 public class AlarmModel extends RealmObject {
+    public static final String FIELD_ALARMID = "alarmID";
+
+    @PrimaryKey
     private String alarmID;
     private String drugName;
     private Date startDate;
     private int doses;
     private int currentDose;
     private int periodicity;
+    private int pillsPerDose;
     private int periodicityMeasure;
     private boolean showDetails;
 
@@ -84,6 +89,14 @@ public class AlarmModel extends RealmObject {
 
     public void setShowDetails(boolean showDetails) {
         this.showDetails = showDetails;
+    }
+
+    public int getPillsPerDose() {
+        return pillsPerDose;
+    }
+
+    public void setPillsPerDose(int pillsPerDose) {
+        this.pillsPerDose = pillsPerDose;
     }
 
     public Date calculateNextAlarm(){

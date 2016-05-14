@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,16 +8,49 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.puskin.frankenstein.activities.AlarmActivity"
-    android:background="@android:color/holo_red_dark">
+    android:background="@color/colorPrimaryDark"
+    android:gravity="center"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@android:style/TextAppearance.Large"
-        android:layout_centerInParent="true"
-        android:text="THIS IS A POTATO NOBODY FUCKIN MOVE!!!"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"/>
+        android:text="Time to take:"
+        android:textColor="@android:color/white"
+        android:textAppearance="@android:style/TextAppearance.Large"/>
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/textView_pillDose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="22"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"
+        android:textSize="32sp"/>
+
+    <TextView
+        android:id="@+id/textView_drugName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Oscillococcinum"
+        android:textColor="@android:color/white"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        />
+
+    <Button
+        android:id="@+id/button_OK"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        android:background="@drawable/bg_button_selector"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginRight="48dp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textAppearance="@android:style/TextAppearance.Large"/>
+
+</LinearLayout>

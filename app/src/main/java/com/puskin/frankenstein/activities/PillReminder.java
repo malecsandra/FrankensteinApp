@@ -52,6 +52,7 @@ public class PillReminder extends AppCompatActivity {
         realm = Realm.getDefaultInstance();
         RealmList<AlarmModel> alarms = new RealmList<>();
         RealmResults<AlarmModel> alarmResults = realm.where(AlarmModel.class).findAll();
+
         for(AlarmModel alarm : alarmResults)
             alarms.add(alarm);
 

@@ -1,6 +1,9 @@
 package com.puskin.frankenstein.adapters;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,11 +14,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.puskin.frankenstein.AlarmReceiver;
 import com.puskin.frankenstein.R;
 import com.puskin.frankenstein.models.AlarmModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -77,6 +82,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         TextView textTotalDoses;
         @Bind(R.id.textView_periodicity)
         TextView textPeriodicity;
+        @Bind(R.id.textView_pillsPerDose)
+        TextView textViewPillsPerDose;
 
         public AlarmViewHolder(View itemView) {
             super(itemView);
@@ -91,8 +98,21 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             buttonDeleteAlarm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+//                    realm.beginTransaction();
+//                    alarmModel.removeFromRealm();
+//                    realm.commitTransaction();
+
+                    Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+                    alarmIntent.putExtra("alarmID", alarmModel.getAlarmID());
+                    PendingIntent pendingAlarmIntent = PendingIntent.getBroadcast(context, AlarmReceiver.ALARM_REQUEST, alarmIntent, 0);
+
+                    AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                    alarmManager.cancel(pendingAlarmIntent);
+                    pendingAlarmIntent.cancel();
+
+                    AlarmModel realmAlarm = realm.where(AlarmModel.class).equalTo(AlarmModel.FIELD_ALARMID, alarmModel.getAlarmID()).findFirst();
                     realm.beginTransaction();
-                    alarmModel.removeFromRealm();
+                    realmAlarm.removeFromRealm();
                     realm.commitTransaction();
 
                     alarmModels.remove(alarmModel);
@@ -100,7 +120,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
                 }
             });
 
-            textNextAlarm.setText(sdf.format(alarmModel.calculateNextAlarm()));
+            if(alarmModel.getCurrentDose() == alarmModel.getDoses()){
+                textNextAlarm.setText("All doses taken.");
+            }
+            else {
+                textNextAlarm.setText(sdf.format(alarmModel.calculateNextAlarm()));
+            }
 
             buttonExpandDetails.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -128,7 +153,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 
             textCurrentDose.setText(Integer.toString(alarmModel.getCurrentDose()));
             textTotalDoses.setText(Integer.toString(alarmModel.getDoses()));
-            textPeriodicity.setText(parsePeriodicityMeasure(alarmModel.getPeriodicity()));
+            textPeriodicity.setText(Integer.toString(alarmModel.getPeriodicity()) + " " + parsePeriodicityMeasure(alarmModel.getPeriodicityMeasure()));
+            textViewPillsPerDose.setText(Integer.toString(alarmModel.getPillsPerDose()));
         }
 
         private void toggleDetails(boolean showDetails) {

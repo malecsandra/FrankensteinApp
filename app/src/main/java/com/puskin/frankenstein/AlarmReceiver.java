@@ -42,9 +42,13 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
                 PowerManager.ON_AFTER_RELEASE, "Potato");
         wakeLock.acquire();
 
+        String alarmID = intent.getStringExtra("alarmID");
+
         Intent i = new Intent();
         i.setClassName(context.getPackageName(), AlarmActivity.class.getName());
+        i.putExtra("alarmID", alarmID);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         context.startActivity(i);
 
 //        startWakefulService(context, (intent.setComponent(comp)));
