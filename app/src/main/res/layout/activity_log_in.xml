@@ -63,6 +63,12 @@
             android:text="AlarmTests"
             android:id="@+id/button_alarmTests"/>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AlarmTests"
+            android:id="@+id/button_addAppointment"/>
+
         <ProgressBar
             android:id="@+id/pbLogin"
             style="@style/Widget.AppCompat.ProgressBar"

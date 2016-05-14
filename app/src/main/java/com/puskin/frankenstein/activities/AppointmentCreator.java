@@ -81,7 +81,7 @@ public class AppointmentCreator extends AppCompatActivity {
 
         doctor = (Doctor) getIntent().getParcelableExtra("doctor");
 
-        textViewLabelDoctorName.setText(doctor.getName() + doctor.getSurname());
+        textViewLabelDoctorName.setText(doctor.getName() + " " +  doctor.getSurname());
         textViewLabelSpeciality.setText(doctor.getSpeciality().getSpecialityName());
 
         nowCalendar = Calendar.getInstance();
