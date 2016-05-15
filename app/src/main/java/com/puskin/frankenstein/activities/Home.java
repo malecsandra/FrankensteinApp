@@ -155,13 +155,22 @@ public class Home extends AppCompatActivity {
                 //Closing drawer on item click
                 drawerLayout.closeDrawers();
 
+                Intent i;
                 //Check to see which item was being clicked and perform appropriate action
                 switch (menuItem.getItemId()) {
-
                     case R.id.analize:
 //                        Toast.makeText(getApplicationContext(), "Analize Selected", Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(Home.this, LaboratoryTests.class);
+                        i = new Intent(Home.this, LaboratoryTests.class);
                         startActivity(i);
+                        return true;
+
+                    case R.id.treatment:
+                        i = new Intent(Home.this, TreatmentList.class);
+                        startActivity(i);
+                        return true;
+
+                    case R.id.logOut:
+                        logOut();
                         return true;
 
                     default:
@@ -172,6 +181,17 @@ public class Home extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void logOut() {
+        realm.beginTransaction();
+        realm.clear(User.class);
+        realm.commitTransaction();
+
+        Intent i = new Intent(this, LogIn.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+        finish();
     }
 
     private void populateDrawer() {

@@ -8,6 +8,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.puskin.frankenstein.activities.TreatmentList;
 import com.puskin.frankenstein.events.AppointmentEvent;
 import com.puskin.frankenstein.events.AppointmentSubmitedEvent;
 import com.puskin.frankenstein.events.AvailableDatesEvent;
@@ -16,9 +17,11 @@ import com.puskin.frankenstein.events.DoctorEvent;
 import com.puskin.frankenstein.events.LoginEvent;
 import com.puskin.frankenstein.events.RegisterEvent;
 import com.puskin.frankenstein.events.TestListEvent;
+import com.puskin.frankenstein.events.TreatmentListEvent;
 import com.puskin.frankenstein.models.AppointmentModel;
 import com.puskin.frankenstein.models.AppointmentSubmitModel;
 import com.puskin.frankenstein.models.AppointmentTestSet;
+import com.puskin.frankenstein.models.AppointmentTreatment;
 import com.puskin.frankenstein.models.Clinic;
 import com.puskin.frankenstein.models.Doctor;
 import com.puskin.frankenstein.models.LoginObject;
@@ -47,7 +50,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Alexandra on 02-Apr-16.
  */
 public class NetworkHelper {
-    public static final String BASE_URL = "http://192.168.100.9/FrankensteinWS/api/";
+    public static final String BASE_URL = "http://192.168.43.237/FrankensteinWS/api/";
 
     public static boolean doLogin(LoginObject loginObject) {
         Log.d("DBG", "Login with user: " + loginObject.getUsername() + " and password: " + loginObject.getPassword());
@@ -147,8 +150,7 @@ public class NetworkHelper {
         });
     }
 
-    public static void getDoctors()
-    {
+    public static void getDoctors() {
         Gson gson = new GsonBuilder()
                 .setExclusionStrategies(new ExclusionStrategy() {
 
@@ -178,7 +180,7 @@ public class NetworkHelper {
             @Override
             public void onResponse(Call<RealmList<Doctor>> call, Response<RealmList<Doctor>> response) {
                 Log.d("DBG", "onResponse: " + response.code() + ' ' + response.message());
-                DoctorEvent doctorEvent = new DoctorEvent(response.code(), response.message(),response.body());
+                DoctorEvent doctorEvent = new DoctorEvent(response.code(), response.message(), response.body());
                 EventBus.getDefault().post(doctorEvent);
             }
 
@@ -189,7 +191,7 @@ public class NetworkHelper {
         });
     }
 
-    public static void getClinics(){
+    public static void getClinics() {
         Gson gson = new GsonBuilder()
                 .setExclusionStrategies(new ExclusionStrategy() {
 
@@ -219,7 +221,7 @@ public class NetworkHelper {
             @Override
             public void onResponse(Call<RealmList<Clinic>> call, Response<RealmList<Clinic>> response) {
                 Log.d("DBG", "onResponse: " + response.code() + ' ' + response.message());
-                ClinicEvent clinicEvent = new ClinicEvent(response.code(), response.message(),response.body());
+                ClinicEvent clinicEvent = new ClinicEvent(response.code(), response.message(), response.body());
                 EventBus.getDefault().post(clinicEvent);
             }
 
@@ -230,8 +232,7 @@ public class NetworkHelper {
         });
     }
 
-    public static void getLabTests(int userID)
-    {
+    public static void getLabTests(int userID) {
         Gson gson = new GsonBuilder()
                 .setExclusionStrategies(new ExclusionStrategy() {
 
@@ -272,10 +273,9 @@ public class NetworkHelper {
             @Override
             public void onResponse(Call<ArrayList<AppointmentTestSet>> call, Response<ArrayList<AppointmentTestSet>> response) {
                 Log.d("DBG", "onResponse: " + response.code() + ' ' + response.message());
-                if(response.code() == 200){
+                if (response.code() == 200) {
                     EventBus.getDefault().post(new TestListEvent(response.body(), response.code(), response.message()));
-                }
-                else{
+                } else {
                     EventBus.getDefault().post(new TestListEvent(null, response.code(), response.message()));
                 }
             }
@@ -384,10 +384,9 @@ public class NetworkHelper {
             @Override
             public void onResponse(Call<ArrayList<Date>> call, Response<ArrayList<Date>> response) {
                 Log.d("DBG", "onResponse: " + response.message() + " " + response.code());
-                if(response.code() == 200){
+                if (response.code() == 200) {
                     EventBus.getDefault().post(new AvailableDatesEvent(response.body(), response.code(), response.message()));
-                }
-                else{
+                } else {
                     EventBus.getDefault().post(new AvailableDatesEvent(null, response.code(), response.message()));
                 }
             }
@@ -496,10 +495,9 @@ public class NetworkHelper {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.d("DBG", "onResponse: " + response.message() + " " + response.code());
-                if(response.code() == 200 || response.code() == 204){
+                if (response.code() == 200 || response.code() == 204) {
                     EventBus.getDefault().post(new AppointmentSubmitedEvent(response.code(), response.message()));
-                }
-                else{
+                } else {
                     EventBus.getDefault().post(new AppointmentSubmitedEvent(response.code(), response.message()));
                 }
             }
@@ -510,6 +508,61 @@ public class NetworkHelper {
 
             }
         });
+    }
 
+    public static void getTreatmentList(int userID) {
+        Gson gson = new GsonBuilder()
+                .setExclusionStrategies(new ExclusionStrategy() {
+
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getDeclaringClass().equals(RealmObject.class);
+                    }
+
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
+                .build();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        FrankensteinEndpointInterface feInterface = retrofit.create(FrankensteinEndpointInterface.class);
+
+        Call<ArrayList<AppointmentTreatment>> call = feInterface.getTreatments(userID);
+        call.enqueue(new Callback<ArrayList<AppointmentTreatment>>() {
+
+
+            @Override
+            public void onResponse(Call<ArrayList<AppointmentTreatment>> call, Response<ArrayList<AppointmentTreatment>> response) {
+                Log.d("DBG", "onResponse: " + response.code() + ' ' + response.message());
+                if (response.code() == 200) {
+                    EventBus.getDefault().post(new TreatmentListEvent(response.body(), response.code(), response.message()));
+                } else {
+                    EventBus.getDefault().post(new TreatmentListEvent(null, response.code(), response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<AppointmentTreatment>> call, Throwable t) {
+                Log.d("DBG", "Fail: getLabResults");
+                EventBus.getDefault().post(new TreatmentListEvent(null, -1, "Test List Request Failed"));
+            }
+        });
     }
 }

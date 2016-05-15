@@ -3,6 +3,7 @@ package com.puskin.frankenstein.network;
 import com.puskin.frankenstein.models.AppointmentModel;
 import com.puskin.frankenstein.models.AppointmentSubmitModel;
 import com.puskin.frankenstein.models.AppointmentTestSet;
+import com.puskin.frankenstein.models.AppointmentTreatment;
 import com.puskin.frankenstein.models.Clinic;
 import com.puskin.frankenstein.models.Doctor;
 import com.puskin.frankenstein.models.LoginObject;
@@ -60,4 +61,7 @@ public interface FrankensteinEndpointInterface {
     @Headers("Content-Type: application/json")
     @PUT("appointments")
     Call<Void> modifyApopintment(@Body AppointmentSubmitModel appointmentSubmitModel);
+
+    @GET("treatments/{person_id}")
+    Call<ArrayList<AppointmentTreatment>> getTreatments(@Path("person_id") int personID);
 }

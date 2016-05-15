@@ -73,6 +73,7 @@
             android:name=".activities.AlarmActivity"
             android:screenOrientation="sensorPortrait"
             android:showOnLockScreen="true" />
+        <activity android:name=".activities.TreatmentList"></activity>
     </application>
 
 </manifest>

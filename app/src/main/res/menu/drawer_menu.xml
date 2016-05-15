@@ -15,14 +15,17 @@
             android:title="Laboratory Tests"
             android:icon="@drawable/test_tube"/>
 
-        <!--<item-->
-            <!--android:id="@+id/tratament"-->
-            <!--android:checked="true"-->
-            <!--android:title="Medical Treatment"-->
-            <!--android:icon="@drawable/prescription"/>-->
+        <item
+            android:id="@+id/treatment"
+            android:checked="false"
+            android:title="Medical Treatment"
+            android:icon="@drawable/prescription"/>
 
-
-
+        <item
+            android:id="@+id/logOut"
+            android:checked="false"
+            android:title="Log Out"
+            android:icon="@drawable/log_out"/>
 
     </group>
 </menu>

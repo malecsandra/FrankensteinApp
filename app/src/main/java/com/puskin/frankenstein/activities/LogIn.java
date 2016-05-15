@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.puskin.frankenstein.R;
 import com.puskin.frankenstein.events.LoginEvent;
 import com.puskin.frankenstein.models.LoginObject;
+import com.puskin.frankenstein.models.User;
 import com.puskin.frankenstein.network.NetworkHelper;
 
 import org.greenrobot.eventbus.EventBus;
@@ -19,6 +20,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 public class LogIn extends AppCompatActivity {
 
@@ -36,6 +38,7 @@ public class LogIn extends AppCompatActivity {
     @Bind(R.id.tvSignUp)
     TextView tvSignUp;
 
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,15 @@ public class LogIn extends AppCompatActivity {
                 startActivityForResult(i, REQUEST_CODE);
             }
         });
+
+        realm = Realm.getDefaultInstance();
+        User loggedUser = realm.where(User.class).findFirst();
+
+        if(loggedUser != null){
+            Intent i = new Intent(this, Home.class);
+            startActivity(i);
+            finish();
+        }
     }
 
     @Override
