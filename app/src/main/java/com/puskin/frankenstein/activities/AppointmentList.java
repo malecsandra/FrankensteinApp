@@ -15,8 +15,10 @@ import com.puskin.frankenstein.adapters.AppointmentAdapter;
 import com.puskin.frankenstein.adapters.DoctorAdapter;
 import com.puskin.frankenstein.adapters.LabTestAdapter;
 import com.puskin.frankenstein.events.AppointmentEvent;
+import com.puskin.frankenstein.events.AppointmentSubmitedEvent;
 import com.puskin.frankenstein.events.TestListEvent;
 import com.puskin.frankenstein.models.AppointmentModel;
+import com.puskin.frankenstein.models.AppointmentSubmitModel;
 import com.puskin.frankenstein.models.Doctor;
 import com.puskin.frankenstein.models.User;
 import com.puskin.frankenstein.network.NetworkHelper;
@@ -84,8 +86,17 @@ public class AppointmentList extends AppCompatActivity {
 
             pbAppointment.setVisibility(View.GONE);
         }
+        else if(event.getResponseCode() == 204){
+            appointmentAdapter.notifyDataSetChanged();
+        }
     }
 
+    @Subscribe
+    public void appointmentModifiedEvent(AppointmentSubmitedEvent event){
+        if(event.getResponseCode() == 200 || event.getResponseCode() == 204){
+            appointmentAdapter.notifyDataSetChanged();
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

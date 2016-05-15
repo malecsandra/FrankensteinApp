@@ -35,10 +35,6 @@ public class LogIn extends AppCompatActivity {
     ProgressBar pbLogin;
     @Bind(R.id.tvSignUp)
     TextView tvSignUp;
-    @Bind(R.id.button_alarmTests)
-    Button buttonAlarmTests;
-    @Bind(R.id.button_addAppointment)
-    Button buttonAddAppointment;
 
 
     @Override
@@ -63,22 +59,6 @@ public class LogIn extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(LogIn.this, Register.class);
                 startActivityForResult(i, REQUEST_CODE);
-            }
-        });
-
-        buttonAlarmTests.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(LogIn.this, PillReminder.class);
-                startActivity(i);
-            }
-        });
-
-        buttonAddAppointment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(LogIn.this, AppointmentCreator.class);
-                startActivity(i);
             }
         });
     }

@@ -47,7 +47,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Alexandra on 02-Apr-16.
  */
 public class NetworkHelper {
-    public static final String BASE_URL = "http://192.168.0.102/FrankensteinWS/api/";
+    public static final String BASE_URL = "http://192.168.100.9/FrankensteinWS/api/";
 
     public static boolean doLogin(LoginObject loginObject) {
         Log.d("DBG", "Login with user: " + loginObject.getUsername() + " and password: " + loginObject.getPassword());
@@ -440,6 +440,62 @@ public class NetworkHelper {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.d("DBG", "onResponse: " + response.message() + " " + response.code());
+                if (response.code() == 200 || response.code() == 204) {
+                    EventBus.getDefault().post(new AppointmentSubmitedEvent(response.code(), response.message()));
+                } else {
+                    EventBus.getDefault().post(new AppointmentSubmitedEvent(response.code(), response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                EventBus.getDefault().post(new AppointmentSubmitedEvent(-1, "Request completely failed"));
+
+            }
+        });
+
+    }
+
+    public static void cancelApointment(final AppointmentSubmitModel appointmentSubmitModel) {
+        Gson gson = new GsonBuilder()
+                .setExclusionStrategies(new ExclusionStrategy() {
+
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getDeclaringClass().equals(RealmObject.class);
+                    }
+
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
+                .build();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        FrankensteinEndpointInterface feInterface = retrofit.create(FrankensteinEndpointInterface.class);
+
+        Call<Void> call = feInterface.modifyApopintment(appointmentSubmitModel);
+        call.enqueue(new Callback<Void>() {
+
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.d("DBG", "onResponse: " + response.message() + " " + response.code());
                 if(response.code() == 200 || response.code() == 204){
                     EventBus.getDefault().post(new AppointmentSubmitedEvent(response.code(), response.message()));
                 }
@@ -454,5 +510,6 @@ public class NetworkHelper {
 
             }
         });
+
     }
 }

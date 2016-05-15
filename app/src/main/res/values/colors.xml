@@ -7,4 +7,5 @@
 
 
     <color name="medium_transparent">#88888888</color>
+    <color name="colorCanceledAppointment">#ff6464</color>
 </resources>

@@ -21,7 +21,9 @@ import android.widget.Toast;
 
 import com.puskin.frankenstein.R;
 import com.puskin.frankenstein.models.AppointmentModel;
+import com.puskin.frankenstein.models.AppointmentSubmitModel;
 import com.puskin.frankenstein.models.Clinic;
+import com.puskin.frankenstein.network.NetworkHelper;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -55,7 +57,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     @Override
     public void onBindViewHolder(AppointmentHolder holder, int position) {
         AppointmentModel appointmentModel = appointmentList.get(position);
-        holder.bind(appointmentModel, context);
+        holder.bind(appointmentModel, context, position);
     }
 
     @Override
@@ -66,6 +68,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     public static class AppointmentHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.textView_date)
         public TextView date;
+        @Bind(R.id.textView_time)
+        public TextView time;
         @Bind(R.id.textView_doctorName)
         public TextView doctorName;
         @Bind(R.id.textView_speciality)
@@ -84,15 +88,21 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(final AppointmentModel appointmentModel, final Context context) {
+        public void bind(final AppointmentModel appointmentModel, final Context context, int position) {
             if (appointmentModel.getStatusId() == 0) {
                 root.setCardBackgroundColor(context.getResources().getColor(R.color.colorAppointment));
+            } else if (appointmentModel.getStatusId() == -1) {
+                root.setCardBackgroundColor(context.getResources().getColor(R.color.colorCanceledAppointment));
             } else {
                 root.setCardBackgroundColor(Color.parseColor("#f9f9f9"));
             }
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MMM.yyyy");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
             date.setText(dateFormat.format(appointmentModel.getAppointmentDate()));
+            time.setText(timeFormat.format(appointmentModel.getAppointmentDate()));
+
             doctorName.setText(appointmentModel.getDoctor());
             speciality.setText(appointmentModel.getSpeciality());
 
@@ -141,7 +151,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             appInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(appointmentModel.getAppointmentDetailsList().size() > 0) {
+                    if (appointmentModel.getAppointmentDetailsList().size() > 0) {
                         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
                         dialogBuilder.setTitle("Details");
                         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -168,10 +178,46 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                         AlertDialog alertDialog = dialogBuilder.create();
 
                         alertDialog.show();
-                    }
-                    else{
+                    } else {
                         Toast.makeText(context, "No Details to show", Toast.LENGTH_SHORT).show();
                     }
+                }
+            });
+
+            appInfo.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                    dialogBuilder.setTitle("Cancel Appointment");
+                    dialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            AppointmentSubmitModel appointmentSubmitModel = new AppointmentSubmitModel(appointmentModel.getAppointmentId(),
+                                    appointmentModel.getPersonId(),
+                                    appointmentModel.getDoctorId(),
+                                    appointmentModel.getAppointmentDate(),
+                                    appointmentModel.getStatusId());
+
+                            NetworkHelper.cancelApointment(appointmentSubmitModel);
+
+                            appointmentModel.setStatusId(-1);
+
+                            dialog.dismiss();
+                        }
+                    });
+
+                   dialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+                           dialog.dismiss();
+                       }
+                   });
+
+                    dialogBuilder.setMessage("Are you sure you want to cancel this appointment?");
+                    AlertDialog alertDialog = dialogBuilder.create();
+
+                    alertDialog.show();
+
+                    return true;
                 }
             });
         }
