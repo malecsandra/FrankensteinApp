@@ -14,6 +14,7 @@ import com.puskin.frankenstein.events.AppointmentSubmitedEvent;
 import com.puskin.frankenstein.events.AvailableDatesEvent;
 import com.puskin.frankenstein.events.ClinicEvent;
 import com.puskin.frankenstein.events.DoctorEvent;
+import com.puskin.frankenstein.events.ImageDownloadedEvent;
 import com.puskin.frankenstein.events.LoginEvent;
 import com.puskin.frankenstein.events.RegisterEvent;
 import com.puskin.frankenstein.events.TestListEvent;
@@ -24,6 +25,7 @@ import com.puskin.frankenstein.models.AppointmentTestSet;
 import com.puskin.frankenstein.models.AppointmentTreatment;
 import com.puskin.frankenstein.models.Clinic;
 import com.puskin.frankenstein.models.Doctor;
+import com.puskin.frankenstein.models.ImageModel;
 import com.puskin.frankenstein.models.LoginObject;
 import com.puskin.frankenstein.models.MedicalTestModel;
 import com.puskin.frankenstein.models.ScheduleModel;
@@ -50,7 +52,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Alexandra on 02-Apr-16.
  */
 public class NetworkHelper {
-    public static final String BASE_URL = "http://192.168.43.237/FrankensteinWS/api/";
+    public static final String BASE_URL = "http://192.168.43.237/FrankensteinWS/api/"; /*192.168.43.237*/
 
     public static boolean doLogin(LoginObject loginObject) {
         Log.d("DBG", "Login with user: " + loginObject.getUsername() + " and password: " + loginObject.getPassword());
@@ -70,8 +72,18 @@ public class NetworkHelper {
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                 .create();
 
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
+                .build();
+
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -82,6 +94,8 @@ public class NetworkHelper {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 Log.d("dbg", "onResponse: response was successful");
+                Log.d("dbg", "Response code: " + response.code());
+                Log.d("dbg", response.message());
 
                 if (response.code() == 200) {
                     Realm realm = Realm.getDefaultInstance();
@@ -562,6 +576,61 @@ public class NetworkHelper {
             public void onFailure(Call<ArrayList<AppointmentTreatment>> call, Throwable t) {
                 Log.d("DBG", "Fail: getLabResults");
                 EventBus.getDefault().post(new TreatmentListEvent(null, -1, "Test List Request Failed"));
+            }
+        });
+    }
+
+    public static void getDoctorImage (int doctorID) {
+        Gson gson = new GsonBuilder()
+                .setExclusionStrategies(new ExclusionStrategy() {
+
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getDeclaringClass().equals(RealmObject.class);
+                    }
+
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
+                .build();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        FrankensteinEndpointInterface feInterface = retrofit.create(FrankensteinEndpointInterface.class);
+
+        Call<ImageModel> call = feInterface.getDoctorImage(doctorID);
+        call.enqueue(new Callback<ImageModel>() {
+
+            @Override
+            public void onResponse(Call<ImageModel> call, Response<ImageModel> response) {
+                Log.d("DBG", "onResponse: " + response.code() + ' ' + response.message());
+                if (response.code() == 200) {
+                    EventBus.getDefault().post(new ImageDownloadedEvent(response.code(), response.message(), response.body()));
+                } else {
+                    EventBus.getDefault().post(new ImageDownloadedEvent(response.code(), response.message(),null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ImageModel> call, Throwable t) {
+                Log.d("DBG", "Fail: getDoctorImage");
+                EventBus.getDefault().post(new ImageDownloadedEvent(-1, t.getMessage(),null));
             }
         });
     }

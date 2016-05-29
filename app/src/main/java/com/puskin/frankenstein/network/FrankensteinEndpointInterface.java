@@ -6,6 +6,7 @@ import com.puskin.frankenstein.models.AppointmentTestSet;
 import com.puskin.frankenstein.models.AppointmentTreatment;
 import com.puskin.frankenstein.models.Clinic;
 import com.puskin.frankenstein.models.Doctor;
+import com.puskin.frankenstein.models.ImageModel;
 import com.puskin.frankenstein.models.LoginObject;
 import com.puskin.frankenstein.models.ScheduleModel;
 import com.puskin.frankenstein.models.User;
@@ -64,4 +65,7 @@ public interface FrankensteinEndpointInterface {
 
     @GET("treatments/{person_id}")
     Call<ArrayList<AppointmentTreatment>> getTreatments(@Path("person_id") int personID);
+
+    @GET("doctorimage/{doctor_id}")
+    Call<ImageModel> getDoctorImage (@Path("doctor_id") int doctorID);
 }

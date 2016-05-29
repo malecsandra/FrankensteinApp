@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#5e9b37</color>
-    <color name="colorAppointment">#b4dd9a</color>
+    <color name="colorPrimary">#607D8B</color>
+    <color name="colorPrimaryDark">#455A64</color>
+    <color name="colorAccent">#8BC34A</color>
+    <color name="colorAppointment">#FFEBCD</color>
 
 
     <color name="medium_transparent">#88888888</color>
-    <color name="colorCanceledAppointment">#ff6464</color>
+    <color name="colorCanceledAppointment">#dce3e7</color>
 </resources>

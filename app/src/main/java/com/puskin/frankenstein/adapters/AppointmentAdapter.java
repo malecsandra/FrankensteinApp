@@ -20,14 +20,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.puskin.frankenstein.R;
+import com.puskin.frankenstein.events.ShowImageEvent;
 import com.puskin.frankenstein.models.AppointmentModel;
 import com.puskin.frankenstein.models.AppointmentSubmitModel;
 import com.puskin.frankenstein.models.Clinic;
 import com.puskin.frankenstein.network.NetworkHelper;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
@@ -137,7 +141,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             clinicMap.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, "Clicked clinic map", Toast.LENGTH_SHORT).show();
+                    EventBus.getDefault().post(new ShowImageEvent(appointmentModel.getDoctorId()));
                 }
             });
 
@@ -187,41 +191,44 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             appInfo.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-                    dialogBuilder.setTitle("Cancel Appointment");
-                    dialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            AppointmentSubmitModel appointmentSubmitModel = new AppointmentSubmitModel(appointmentModel.getAppointmentId(),
-                                    appointmentModel.getPersonId(),
-                                    appointmentModel.getDoctorId(),
-                                    appointmentModel.getAppointmentDate(),
-                                    appointmentModel.getStatusId());
+                    if (appointmentModel.getAppointmentDate().before(new Date())) {
+                        Toast.makeText(context, "Appointment date is before current date", Toast.LENGTH_SHORT).show();
+                    } else {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                        dialogBuilder.setTitle("Cancel Appointment");
+                        dialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                AppointmentSubmitModel appointmentSubmitModel = new AppointmentSubmitModel(appointmentModel.getAppointmentId(),
+                                        appointmentModel.getPersonId(),
+                                        appointmentModel.getDoctorId(),
+                                        appointmentModel.getAppointmentDate(),
+                                        appointmentModel.getStatusId());
 
-                            NetworkHelper.cancelApointment(appointmentSubmitModel);
+                                NetworkHelper.cancelApointment(appointmentSubmitModel);
 
-                            appointmentModel.setStatusId(-1);
+                                appointmentModel.setStatusId(-1);
 
-                            dialog.dismiss();
-                        }
-                    });
+                                dialog.dismiss();
+                            }
+                        });
 
-                   dialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
-                           dialog.dismiss();
-                       }
-                   });
+                        dialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
 
-                    dialogBuilder.setMessage("Are you sure you want to cancel this appointment?");
-                    AlertDialog alertDialog = dialogBuilder.create();
+                        dialogBuilder.setMessage("Are you sure you want to cancel this appointment?");
+                        AlertDialog alertDialog = dialogBuilder.create();
 
-                    alertDialog.show();
-
+                        alertDialog.show();
+                    }
                     return true;
+
                 }
             });
         }
     }
-
 }
 
